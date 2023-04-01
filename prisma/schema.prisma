@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Course {
+  id                  String   @id
+  createdAt           DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime @updatedAt @db.Timestamptz(6)
+  title               String   @db.VarChar(255)
+  description         String   @db.Text
+  type                String
+  cost                Float    @db.Real
+  level               String   @db.VarChar(255)
+  time                Int      @db.SmallInt
+  averageRating       Float    @map("average_rating") @db.Real
+  numberOfSubscribers Int      @map("number of subscribers") @db.Integer
+  numberOfLessions    Int      @map("number_of_lessions") @db.SmallInt
+  thumbnail           String
+}
+
+model User {
+  id        String   @id
+  username  String
+  email     String
+  password  String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+}
