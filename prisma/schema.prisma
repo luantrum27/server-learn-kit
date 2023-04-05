@@ -28,9 +28,10 @@ model Course {
 
 model User {
   id        String   @id
-  username  String
-  email     String
+  username  String   @unique
+  email     String   @unique
   password  String
+  isAdmin   Boolean  @default(false)
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @db.Timestamptz(6)
 }
