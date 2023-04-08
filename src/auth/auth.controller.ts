@@ -1,15 +1,9 @@
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import {
-  Controller,
-  Post,
-  Get,
-  Request,
-  UseGuards,
-  Body,
-} from '@nestjs/common';
+import { Controller, Post, Body, HttpStatus, HttpCode } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserLoginDto } from './dto/user-login.dto';
 import { UserRegisterDto } from 'src/auth/dto/user-register.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { LogoutDto } from './dto/logout.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -19,10 +13,16 @@ export class AuthController {
   async login(@Body() user: UserLoginDto) {
     return this.authService.login(user);
   }
-  @Get('hello')
-  hello() {
-    console.log('hello');
-    return 'hello';
+
+  @Post('refresh-token')
+  @HttpCode(HttpStatus.CREATED)
+  async getRefreshToken(@Body() refreshToken: RefreshTokenDto) {
+    try {
+      const token = await this.authService.refreshToken(refreshToken);
+      return token;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   @Post('register')
@@ -30,9 +30,8 @@ export class AuthController {
     return this.authService.register(userRegister);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  @Post('logout')
+  logout(@Body() dto: LogoutDto) {
+    return this.authService.logout(dto);
   }
 }

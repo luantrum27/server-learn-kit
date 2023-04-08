@@ -15,4 +15,14 @@ export class UsersService {
     if (!user) throw new NotFoundException('user');
     return user;
   }
+
+  async getUserProfile(id: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!user) throw new NotFoundException('user');
+    return user;
+  }
 }
