@@ -1,10 +1,4 @@
 {
-    "env": {
-        "DATABASE_URL": "@learn_kit_database_url",
-        "JWT_SECRET": "@learn_kit_jwt_scret",
-        "GOOGLE_CLIENT_ID": "@learn_kit_google_client_id",
-        "GOOGLE_SECRET": "@learn_kit_google_scret"
-    },
     "builds": [
         {
             "src": "src/main.ts",
