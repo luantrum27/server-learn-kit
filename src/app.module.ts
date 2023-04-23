@@ -9,9 +9,13 @@ import { PrismaModule } from './prisma/prisma.module';
 import { CoursesController } from './modules/courses/courses.controller';
 import { CoursesService } from './modules/courses/courses.service';
 import { CoursesModule } from './modules/courses/courses.module';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
+    CacheModule.register({
+      isGlobal: true,
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
