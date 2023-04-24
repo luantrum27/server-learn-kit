@@ -11,7 +11,6 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { IAuthentication } from 'src/interfaces/auth.interface';
 import { User } from '@prisma/client';
 import { LogoutDto } from './dto/logout.dto';
-import { getRefreshTokenKey } from 'src/utils/redis';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 
@@ -32,7 +31,7 @@ export class AuthService {
     if (!passwordMatches) throw new UnauthorizedException();
     const token = await this.signToken(user);
     const refreshToken = await this.createRefreshToken(user);
-    await this.cacheManager.set(getRefreshTokenKey(user.id), refreshToken);
+    await this.cacheManager.set(this.getRefreshTokenKey(user.id), refreshToken);
     return { access_token: token, refresh_token: refreshToken };
   }
 
@@ -45,7 +44,10 @@ export class AuthService {
     } as User;
     const token = await this.signToken(newUser);
     const refreshToken = await this.createRefreshToken(newUser);
-    await this.cacheManager.set(getRefreshTokenKey(newUser.id), refreshToken);
+    await this.cacheManager.set(
+      this.getRefreshTokenKey(newUser.id),
+      refreshToken,
+    );
     await this.prisma.user.create({ data: newUser });
     return { access_token: token, refresh_token: refreshToken };
   }
@@ -90,7 +92,7 @@ export class AuthService {
       };
     }
     const refreshToken = await this.createRefreshToken(user);
-    await this.cacheManager.set(getRefreshTokenKey(user.id), refreshToken);
+    await this.cacheManager.set(this.getRefreshTokenKey(user.id), refreshToken);
     return {
       access_token: token,
       refresh_token: refreshToken,
@@ -106,11 +108,16 @@ export class AuthService {
         id: payload.userId,
       },
     });
-    const savedToken = await this.cacheManager.get(getRefreshTokenKey(user.id));
+    const savedToken = await this.cacheManager.get(
+      this.getRefreshTokenKey(user.id),
+    );
     if (savedToken !== dto.refreshToken) {
       throw new UnauthorizedException();
     }
-    await this.cacheManager.del(getRefreshTokenKey(user.id));
+    await this.cacheManager.del(this.getRefreshTokenKey(user.id));
     return;
   }
+  getRefreshTokenKey = (name: string) => {
+    return 'refresh-token-' + name;
+  };
 }
