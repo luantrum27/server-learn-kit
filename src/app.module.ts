@@ -10,6 +10,7 @@ import { CoursesController } from './modules/courses/courses.controller';
 import { CoursesService } from './modules/courses/courses.service';
 import { CoursesModule } from './modules/courses/courses.module';
 import { CacheModule } from '@nestjs/cache-manager';
+import { AppControllerTsController } from './app.controller';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     PrismaModule,
     CoursesModule,
   ],
-  controllers: [AuthController, CoursesController],
+  controllers: [AuthController, CoursesController, AppControllerTsController],
   providers: [AuthService, JwtService, CoursesService],
 })
 export class AppModule {}
